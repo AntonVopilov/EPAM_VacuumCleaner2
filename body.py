@@ -15,11 +15,12 @@ class Body:
         self._right_bounder = []
         self._left_bounder = []
 
+
     def calculate_body_coord(self):
         self.set_to_empty()
         for i in range(self.width):
             self._top_bounder.append([self.x_left_top + i, self.y_left_top])
-            self._bottom_bounder.append([self.x_left_top + i, self.y_left_top + self.length])
+            self._bottom_bounder.append([self.x_left_top + i, self.y_left_top + self.length - 1])
         for i in range(1, self.length):
             self._right_bounder.append([self.x_left_top + self.width - 1, self.y_left_top + i])
             self._left_bounder.append([self.x_left_top, self.y_left_top + i])

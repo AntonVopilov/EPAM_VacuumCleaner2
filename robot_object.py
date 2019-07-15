@@ -1,6 +1,8 @@
 import time
-from curses import KEY_RIGHT, KEY_LEFT, KEY_DOWN, KEY_UP
+import curses
+from curses import KEY_RIGHT, KEY_LEFT, KEY_DOWN, KEY_UP, KEY_F1
 import body
+
 
 
 class Robot:
@@ -19,11 +21,15 @@ class Robot:
         self._prev_body = None
         self._head_bounder = None
 
+
+
+
         self.move_dict = {
             KEY_UP: self.up,
             KEY_DOWN: self.down,
             KEY_LEFT: self.left,
-            KEY_RIGHT: self.right
+            KEY_RIGHT: self.right,
+            KEY_F1: self.rotate
         }
 
     def check_hurdles(self, x, y):
@@ -66,6 +72,19 @@ class Robot:
         self._head_bounder = self._body._bottom_bounder
         if not self.collision:
             self.y_position += 1
+
+    def rotate(self):
+        body_buffer = body.Body(self.x_position, self.y_position, self.length, self.width)
+
+
+        if any(body_point in self.hurdles_points for body_point in body_buffer.get_body_coord()):
+            self._prev_body = self._body
+            self.collision = True
+        else:
+            self._prev_body = self._body
+            self._body = body_buffer
+            self.length, self.width = self.width, self.length
+            self.collision = False
 
     def make_move(self, command):
         self.move_dict[command]()

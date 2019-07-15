@@ -2,8 +2,10 @@ import curses
 import body
 import map_constructor2 as mc
 import robot_object as rob
-from curses import KEY_RIGHT, KEY_LEFT, KEY_DOWN, KEY_UP
+from curses import KEY_RIGHT, KEY_LEFT, KEY_DOWN, KEY_UP, KEY_F1
 import time
+
+
 
 
 def move_pad(x, y, pad, event, view_box):
@@ -20,6 +22,8 @@ def move_pad(x, y, pad, event, view_box):
 
 
 def main_graphics(stdscr):
+    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+
     stdscr.clear()
     stdscr.keypad(1)
     curses.noecho()
@@ -32,13 +36,13 @@ def main_graphics(stdscr):
     map_pad = curses.newpad(map_length, map_width)
 
     hurdles_max_size = 3
-    hurdles_count = 3
+    hurdles_count = 30
     map_object = mc.MapConstructor(map_width, map_length, hurdles_max_size, hurdles_count)
 
     map_object.add_map_to_pad(map_pad)
 
     robot_width = 3
-    robot_length = 4
+    robot_length = 5
     robot_object = rob.Robot(map_width // 2, map_length // 2, robot_width, robot_length,
                              map_object.get_hurdlers_points())
 
@@ -51,6 +55,7 @@ def main_graphics(stdscr):
     }
 
     view_box = [1, 1, scr_length - 1, scr_width // 2]
+
 
     x = max(map_width // 2 - 6 * robot_object.width, 0)
     y = max(map_length // 2 - robot_object.length, 0)
@@ -66,7 +71,9 @@ def main_graphics(stdscr):
     while True:
 
         event = stdscr.getch()
-        if event not in [KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT]:
+        x_pos, y_pos = robot_object.get_coodrd()
+        stdscr.addstr(0, 0, f'robot location {x_pos} {y_pos}, pad location {x} {y}', curses.color_pair(1))
+        if event not in [KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_F1]:
             break
         robot_object.move_dict[event]()
         robot_object.add_robot_to_pad(map_pad)
